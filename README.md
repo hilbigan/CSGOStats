@@ -13,4 +13,7 @@
 - After it has finished loading, press CTRL+S to save the page as html-file.
 - Now, go to the directory where you saved the CSGOStats.jar. Open the command line (console/cmd/shell) here.
 - Run ```java -jar CSGOStats.jar <file-path to the html> <your steam name>```. For me, its: ```java -jar CSGOStats.jar C:\Users\Aaron\Documents\steam_csgo_data.html kthxbye```. You can also replace your name with any other name to get their data (from your recorded matches, at least)
-NOTE: You need to have java installed to run this.
+
+NOTES:
+- You need to have java installed to run this.
+- If your steam name contains spaces, surround it with quotes ("")!
