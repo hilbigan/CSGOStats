@@ -35,7 +35,7 @@ fun bestMatch(matches: List<Match>, playerName: String, selector: (Stats) -> Int
 fun mostPlayedPlayers(matches: List<Match>, take: Int = 50) {
     matches.map {
         it.playerStats.keys
-    }.flatten().groupBy { it }.asSequence().sortedBy { -it.value.size }.drop(1).take(take).forEach {
+    }.flatten().groupBy { it }.asSequence().sortedBy { -it.value.size }.take(take).forEach {
         println(it.key + ": " + it.value.size + ", ")
     }
 }
