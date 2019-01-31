@@ -1,3 +1,4 @@
+
 fun worstMatch(matches: List<Match>, playerName: String): Match {
     return matches.filter {
         val stats = it.playerStats[playerName]
@@ -48,3 +49,22 @@ fun mostPlayedMaps(matches: List<Match>, take: Int = 20) {
     }
 }
 
+fun longestStreak(matches: List<Match>, selector: (Match) -> Boolean): List<Match> {
+
+    var remaining: MutableList<Match> = matches.sortedBy { it.date }.toMutableList()
+    var longestStreak: MutableList<Match> = mutableListOf()
+    while(remaining.isNotEmpty()){
+        val currentStreak = remaining.takeWhile {
+            selector.invoke(it)
+        }.toMutableList()
+
+        if(currentStreak.size > longestStreak.size){
+            longestStreak = currentStreak
+        }
+
+        remaining = remaining.drop(currentStreak.size).toMutableList()
+        remaining = remaining.dropWhile { !selector.invoke(it) }.toMutableList()
+    }
+
+    return longestStreak
+}

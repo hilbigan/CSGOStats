@@ -16,7 +16,7 @@ data class Match(val map: String, val date: Date, val queueTime: Int, val playTi
         }
     }
 
-    fun orderedPlayerStats(): PlayerStats {
+    private fun orderedPlayerStats(): PlayerStats {
         val stats: PlayerStats = mutableMapOf()
         playerStats.keys.sortedWith(kotlin.Comparator { o1, o2 ->
             (playerStats[o1]!!.team - playerStats[o2]!!.team) * 1000 + playerStats[o2]!!.pts - playerStats[o1]!!.pts
@@ -24,6 +24,18 @@ data class Match(val map: String, val date: Date, val queueTime: Int, val playTi
             stats[it] = playerStats[it]!!
         }
         return stats
+    }
+
+    fun isWon(playerName: String): Boolean {
+        return when (playerStats[playerName]!!.team){
+            0 -> finalScore0 > finalScore1
+            1 -> finalScore0 < finalScore1
+            else -> false
+        }
+    }
+
+    fun isTied(): Boolean {
+        return finalScore1 == finalScore0
     }
 
 }

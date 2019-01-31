@@ -17,6 +17,8 @@ fun main(args: Array<String>) {
     val doc = Jsoup.parse(s)
     println("Done parsing.")
 
+    // Read matches...
+
     val cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"))
     val excludeIndices = listOf(0, 6)
 
@@ -64,6 +66,8 @@ fun main(args: Array<String>) {
     }.filterNotNull().toList()
     println("Done reading matches: n = ${matches.size}")
 
+    // Print results
+
     println("\n**Results:**  \n")
     println("## Worst match by points:  \n")
     worstMatch(matches, args[1]).prettyPrint()
@@ -92,6 +96,39 @@ fun main(args: Array<String>) {
     println("\n## Most frequent teammates and enemies (Top 50):  \n")
     mostPlayedPlayers(matches)
 
+    println("\n## Longest Streaks: \n")
+
+    fun printStreak(list: List<Match>){
+        list.forEach {
+            if(it.playerStats[args[1]]!!.team == 0){
+                print("${it.finalScore0}:${it.finalScore1}, ")
+            } else {
+                print("${it.finalScore1}:${it.finalScore0}, ")
+            }
+        }
+        println()
+    }
+
+    val wins = longestStreak(matches) { match -> match.isWon(args[1])}
+    val looses = longestStreak(matches) { match -> !match.isWon(args[1]) && !match.isTied()}
+    println("Longest *winstreak*: ${wins.first().date} - ${wins.last().date}, ${wins.size} matches")
+    printStreak(wins)
+    println("Longest *loosestreak*: ${looses.first().date} - ${looses.last().date}, ${looses.size} matches")
+    printStreak(looses)
+
+    val winsAndTies = longestStreak(matches) { match -> match.isWon(args[1]) || match.isTied()}
+    val loosesAndTies = longestStreak(matches) { match -> !match.isWon(args[1])}
+    val ties = longestStreak(matches) { match -> match.isTied()}
+    println("Longest *winstreak* with ties: ${winsAndTies.first().date} - ${winsAndTies.last().date}, ${winsAndTies.size} matches (${winsAndTies.filter { it.isWon(args[1]) }.size} wins)")
+    printStreak(winsAndTies)
+    println("Longest *loosestreak* with ties: ${loosesAndTies.first().date} - ${loosesAndTies.last().date}, ${loosesAndTies.size} matches (${loosesAndTies.filter { !it.isWon(args[1]) && !it.isTied() }.size} looses)")
+    printStreak(loosesAndTies)
+
+    println("Longest *draw* streak: ${ties.first().date} - ${ties.last().date}, ${ties.size} matches")
+    printStreak(ties)
+
+
+
     println("\n## Other stats\n")
     for (i in 100..130){
         val mts = matches.filter { it.date.year == i }
@@ -105,6 +142,8 @@ fun main(args: Array<String>) {
         }
         println("  ")
     }
+
+    println("\n(This output is in markdown format. You can convert this to pdf online - search for \"markdown to pdf\" - to get a more structured view.)")
 }
 
 fun stringToSeconds(str: String, drop: Int = 1): Int {
